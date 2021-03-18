@@ -1,0 +1,26 @@
+---
+- name: Install EPEL repo
+  command: "amazon-linux-extras install epel -y"
+
+- name: Install nginx server
+  yum:
+    name: nginx
+    enablerepo: epel
+    state: present
+
+- name: Create static content directory
+  file:
+    path: "{{ assets_dir }}"
+    state: directory
+
+- name: Copy index.html
+  copy:
+    src: index.html
+    dest: /usr/share/nginx/index.html
+  notify:
+    - reload nginx
+
+- name: Start nginx
+  service:
+    name: nginx
+    state: started
